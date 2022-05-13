@@ -8,6 +8,7 @@ api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
+
 # Model Product: Id, Name, Amount, Price
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +23,7 @@ class Product(db.Model):
 
     def __repr__(self):
         return f'Product {self.name}'
+
 
 # Serializers
 ProductSerializer = {
@@ -95,7 +97,9 @@ class BuyProduct(Resource):
         cost = amount * product.price
         cost += cost * 0.30
 
-        return {'message': f"{amount} {product.name}'s was purchased. Cost: {cost} (30% comission)"}
+        return {'message': f"{amount} {product.name}'s was purchased. Cost is calculated with 30% comission)",
+                'cost': cost
+            }
 
 class CreateProduct(Resource):
     @marshal_with(ProductSerializer)
@@ -120,6 +124,7 @@ class UpdateOrDeleteProduct(Resource):
         if not product:
             abort(http_status_code=404, message=f"Product with the name {product_name} doesn't exist")
         
+        # Bug: if field name specified not correctly it still returns 200
         if args['name']:
             product.name = args['name']
         if args['amount']:
