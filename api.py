@@ -1,6 +1,3 @@
-from email import message
-from turtle import ht
-from unicodedata import name
 from flask import Flask
 from flask_restful import Resource, Api, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
@@ -8,7 +5,7 @@ from request_parsers import create_product_args, update_product_args
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://picktmdg:W_USRUDLLBPJ03s4RCUyuaxLLxnRm5IU@dumbo.db.elephantsql.com/picktmdg'
 db = SQLAlchemy(app)
 
 
@@ -43,7 +40,6 @@ def Get_product_by_name_or_abort(name):
     return product
 
 # Endpoints: Base/AllProducts   Base/Status/<Product>   Base/Buy/<Product>/<Amount>
-
 class Info(Resource):
     def get(self):
         return {
