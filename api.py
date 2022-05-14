@@ -1,3 +1,5 @@
+from email import message
+from turtle import ht
 from unicodedata import name
 from flask import Flask
 from flask_restful import Resource, Api, abort, fields, marshal_with, reqparse
@@ -124,7 +126,9 @@ class UpdateOrDeleteProduct(Resource):
         if not product:
             abort(http_status_code=404, message=f"Product with the name {product_name} doesn't exist")
         
-        # Bug: if field name specified not correctly it still returns 200
+        if args['name'] == None and args['amount'] == None and args['price'] == None:
+            abort(http_status_code=404, message="Any of the required filds are not specified.")
+
         if args['name']:
             product.name = args['name']
         if args['amount']:
