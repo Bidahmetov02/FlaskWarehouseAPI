@@ -2,8 +2,9 @@ from email import message
 from turtle import ht
 from unicodedata import name
 from flask import Flask
-from flask_restful import Resource, Api, abort, fields, marshal_with, reqparse
+from flask_restful import Resource, Api, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
+from request_parsers import create_product_args, update_product_args
 
 app = Flask(__name__)
 api = Api(app)
@@ -35,18 +36,11 @@ ProductSerializer = {
     'price': fields.Float
 }
 
-# Arguments for POST request Creating Product
-create_product_args = reqparse.RequestParser()
-create_product_args.add_argument('name', type=str, help="Name is required! (Name of the product to be crated)", required=True)
-create_product_args.add_argument('amount', type=int, help="Amount is required! (Amount of the product to be crated)", required=True)
-create_product_args.add_argument('price', type=int, help="Price if required! (Price for one product)", required=True)
-
-# Arguments for POST request Updating Product
-update_product_args = reqparse.RequestParser()
-update_product_args.add_argument('name', type=str, help="Name is required! (Name of the product to be crated)")
-update_product_args.add_argument('amount', type=int, help="Amount is required! (Amount of the product to be crated)")
-update_product_args.add_argument('price', type=int, help="Price if required! (Price for one product)")
-
+def Get_product_by_name_or_abort(name):
+    product = Product.query.filter_by(name = name).first()
+    if not product:
+        return abort(http_status_code=404, message=f"Product with the name {name} doesn't exist")
+    return product
 
 # Endpoints: Base/AllProducts   Base/Status/<Product>   Base/Buy/<Product>/<Amount>
 
@@ -81,14 +75,12 @@ class Products(Resource):
 
 class Status(Resource):
     def get(self, product_name):
-        resProduct = Product.query.filter_by(name = product_name).first_or_404()
+        resProduct = Get_product_by_name_or_abort(product_name)
         return {"Product": resProduct.name, "Amount Available": resProduct.amount}
 
 class BuyProduct(Resource):
     def get(self, product_name, amount):
-        product = Product.query.filter_by(name = product_name).first()
-        if not product:
-            abort(http_status_code=404, message=f"Product with the name {name} doesn't exist")
+        product = Get_product_by_name_or_abort(product_name)
 
         if amount > product.amount:
             abort(http_status_code=404, message=f'Not enough product amount in the shop. Available amount: {product.amount}')
@@ -101,7 +93,7 @@ class BuyProduct(Resource):
 
         return {'message': f"{amount} {product.name}'s was purchased. Cost is calculated with 30% comission)",
                 'cost': cost
-            }
+        }
 
 class CreateProduct(Resource):
     @marshal_with(ProductSerializer)
@@ -122,9 +114,7 @@ class UpdateOrDeleteProduct(Resource):
     @marshal_with(ProductSerializer)
     def post(self, product_name):
         args = update_product_args.parse_args()
-        product = Product.query.filter_by(name = product_name).first()
-        if not product:
-            abort(http_status_code=404, message=f"Product with the name {product_name} doesn't exist")
+        product = Get_product_by_name_or_abort(product_name)
         
         if args['name'] == None and args['amount'] == None and args['price'] == None:
             abort(http_status_code=404, message="Any of the required filds are not specified.")
@@ -140,9 +130,7 @@ class UpdateOrDeleteProduct(Resource):
         return product
 
     def delete(self, product_name):
-        product = Product.query.filter_by(name = product_name).first()
-        if not product:
-            abort(http_status_code=404, message=f"Product with the name {product_name} doesn't exist")
+        product = Get_product_by_name_or_abort(product_name)
         db.session.delete(product)
         db.session.commit()
         return {'message': "Product deleted succesfully!"}, 204
