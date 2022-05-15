@@ -5,7 +5,7 @@ from request_parsers import create_product_args, update_product_args
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://picktmdg:W_USRUDLLBPJ03s4RCUyuaxLLxnRm5IU@dumbo.db.elephantsql.com/picktmdg'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 
