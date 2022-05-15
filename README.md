@@ -15,7 +15,7 @@ Simply go the project repository click the button "Code" and then press "Downloa
 # Compiling the the project
 
 To compile this project you need to have "Python" and required packages.\
-You can download it here: https://www.python.org/downloads/
+You can download it here: https://www.python.org/downloads/ \
 You can install the packages by command:
 
 ### `pip install -r requirements.txt`
@@ -36,12 +36,12 @@ You may also see any errors in the console.
 
 # Using the app
 
-To use the application send the GET request with no parameters to the BASE URL: http://127.0.0.1:5000/
+To use the application send the GET request with no parameters to the BASE URL: http://127.0.0.1:5000/ \
 It will respond with all the possible endpoint options. 
 
 # Database
 
-The database is PostgreSQL from free service: https://www.elephantsql.com/
+The database is PostgreSQL from free service: https://www.elephantsql.com/ \
 The database is shared for all users./
 
 
