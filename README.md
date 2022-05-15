@@ -41,8 +41,7 @@ It will respond with all the possible endpoint options.
 
 # Database
 
-The database is PostgreSQL from free service: https://www.elephantsql.com/ \
-The database is shared for all users./
+The database is default SQLite on the localhost \
 
 
 
